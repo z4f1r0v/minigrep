@@ -3,6 +3,9 @@ name: Rust
 on:
   push:
     branches: [ main ]
+    paths-ignore:
+      - 'README'
+      - '.gitignore'
   pull_request:
     branches: [ main ]
     paths-ignore:
