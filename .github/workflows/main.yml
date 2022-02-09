@@ -6,11 +6,13 @@ on:
     paths-ignore:
       - 'README'
       - '.gitignore'
+      - '.github/**'
   pull_request:
     branches: [ main ]
     paths-ignore:
       - 'README'
       - '.gitignore'
+      - '.github/**'
 
 env:
   CARGO_TERM_COLOR: always
