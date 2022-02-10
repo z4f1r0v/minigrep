@@ -1,17 +1,20 @@
+use std::fs;
 use std::error::Error;
-use std::{env, fs};
 
 pub fn run(config: Config) -> Result<(), Box<dyn Error>> {
     let contents = fs::read_to_string(config.filename)?;
 
-    let results = if config.case_sensitive {
-        search(config.query, &contents)
+    if config.count_lines_only {
+        let result = count_lines(config.query, &contents);
+        println!("{}", result)
+    } else if config.case_sensitive {
+        let results = search(config.query, &contents);
+        results.iter().for_each(|x| println!("{}", x));
     } else {
-        search_case_sensitive(config.query, &contents)
+        let results = search_case_sensitive(config.query, &contents);
+        results.iter().for_each(|x| println!("{}", x));
     };
 
-    results.iter()
-        .for_each(|x| println!("{}", x));
     Ok(())
 }
 
@@ -19,6 +22,7 @@ pub struct Config<'a> {
     pub query: &'a str,
     pub filename: &'a str,
     pub case_sensitive: bool,
+    pub count_lines_only: bool,
 }
 
 impl<'a> Config<'a> {
@@ -29,9 +33,10 @@ impl<'a> Config<'a> {
 
         let query = &args[1];
         let filename = &args[2];
-        let case_sensitive = env::var("CASE_INSENSITIVE").is_err();
+        let case_sensitive = args.contains(&"--case-sensitive".to_string());
+        let count_lines_only = args.contains(&"-c".to_string());
 
-        Ok(Config { query, filename, case_sensitive })
+        Ok(Config { query, filename, case_sensitive, count_lines_only })
     }
 }
 
@@ -52,6 +57,16 @@ fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> 
         if l.to_lowercase().contains(&lowercased_query) {
             acc.push(l);
             acc
+        } else {
+            acc
+        }
+    })
+}
+
+fn count_lines<'a>(query: &'a str, contents: &'a str) -> i32 {
+    contents.lines().fold(0, |acc, l| {
+        if l.contains(query) {
+            acc + 1
         } else {
             acc
         }
@@ -84,5 +99,17 @@ Pick three.
 Trust me.";
 
         assert_eq!(vec!["Rust:", "Trust me."], search_case_sensitive(query, contents));
+    }
+
+    #[test]
+    fn test_count_lines() {
+        let query = "rust";
+        let contents = "\
+rust:
+safe, fast, productive.
+Pick three.
+Trust me.";
+
+        assert_eq!(2, count_lines(query, contents));
     }
 }
