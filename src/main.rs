@@ -1,13 +1,31 @@
 extern crate core;
 
-use std::{env, process};
+use std::process;
+
+use clap::{App, Arg, arg, ArgMatches};
 
 use minigrep::Config;
 
 fn main() {
-    let args: Vec<String> = env::args().collect();
+    let matches: ArgMatches = App::new("minigrep")
+        .about("Minigrep")
+        .arg(
+            Arg::new("case-sensitive")
+                .long("case-sensitive")
+                .help("Enable case sensitivity")
+                .takes_value(false)
+        )
+        .arg(
+            Arg::new("count")
+                .short('c')
+                .help("Return the amount matches")
+                .takes_value(false)
+        )
+        .arg(arg!([QUERY]))
+        .arg(arg!([FILENAME]))
+        .get_matches();
 
-    let config = Config::new(&args)
+    let config = Config::new(&matches)
         .unwrap_or_else(|err| {
             eprintln!("Problem parsing arguments: {}", err);
             process::exit(1)
