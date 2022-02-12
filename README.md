@@ -7,9 +7,9 @@ for building a `grep` clone.
 
 I'm going through `man grep` and choosing flags with increasing difficulty to expand my Rust skills. So far we have:
 ```sh
-$ ./target/debug/picogrep -h                   
+$ ./target/debug/picogrep -h
 picogrep 
-picogrep
+A miniature version of grep
 
 USAGE:
     picogrep [OPTIONS] [ARGS]
@@ -22,5 +22,4 @@ OPTIONS:
     -c, --count          Return the amount matches
     -h, --help           Print help information
     -i, --ignore-case    Ignore case sensitivity
-
 ```
