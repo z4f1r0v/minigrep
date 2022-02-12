@@ -1,4 +1,4 @@
-![example workflow](https://github.com/z4f1r0v/picogrep/actions/workflows/main.yml/badge.svg)
+[![build](https://github.com/z4f1r0v/picogrep/actions/workflows/main.yml/badge.svg?branch=main)](https://github.com/z4f1r0v/picogrep/actions/workflows/main.yml)
 
 # picogrep
 
