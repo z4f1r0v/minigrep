@@ -8,7 +8,7 @@ use picogrep::Config;
 
 fn main() {
     let matches: ArgMatches = App::new("picogrep")
-        .about("picogrep")
+        .about("A miniature version of grep")
         .arg(
             Arg::new("ignore-case")
                 .short('i')
