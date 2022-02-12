@@ -6,5 +6,21 @@ Yet another implementation of the [Rust book tutorial](https://doc.rust-lang.org
 for building a `grep` clone.
 
 I'm going through `man grep` and choosing flags with increasing difficulty to expand my Rust skills. So far we have:
-- `-c` - count lines matching the search query
-- `case-sensitive` - cares about the case of the search query
+```sh
+$ ./target/debug/minigrep -h                   
+minigrep 
+Minigrep
+
+USAGE:
+    minigrep [OPTIONS] [ARGS]
+
+ARGS:
+    <QUERY>       
+    <FILENAME>    
+
+OPTIONS:
+    -c, --count          Return the amount matches
+    -h, --help           Print help information
+    -i, --ignore-case    Ignore case sensitivity
+
+```
