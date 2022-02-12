@@ -33,12 +33,6 @@ fn main() {
             process::exit(1)
         });
 
-    let query = config.query;
-    let filename = config.filename;
-
-    println!("Searching for {}", query);
-    println!("In file {}", filename);
-
     if let Err(e) = picogrep::run(config) {
         eprintln!("Application error: {}", e);
         process::exit(1)
