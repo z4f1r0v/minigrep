@@ -4,11 +4,11 @@ use std::process;
 
 use clap::{App, Arg, arg, ArgMatches};
 
-use minigrep::Config;
+use picogrep::Config;
 
 fn main() {
-    let matches: ArgMatches = App::new("minigrep")
-        .about("Minigrep")
+    let matches: ArgMatches = App::new("picogrep")
+        .about("picogrep")
         .arg(
             Arg::new("ignore-case")
                 .short('i')
@@ -39,7 +39,7 @@ fn main() {
     println!("Searching for {}", query);
     println!("In file {}", filename);
 
-    if let Err(e) = minigrep::run(config) {
+    if let Err(e) = picogrep::run(config) {
         eprintln!("Application error: {}", e);
         process::exit(1)
     }
