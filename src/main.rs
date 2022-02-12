@@ -21,6 +21,12 @@ fn main() {
                 .help("Return the amount matches")
                 .takes_value(false)
         )
+        .arg(
+            Arg::new("number-lines")
+                .short('n')
+                .help("Number each line matching query staring from 1")
+                .takes_value(false)
+        )
         .arg(arg!([QUERY]))
         .arg(arg!([FILENAME]))
         .get_matches();

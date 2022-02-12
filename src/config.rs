@@ -5,6 +5,7 @@ pub struct Config<'a> {
     pub filename: &'a str,
     pub case_sensitive: bool,
     pub count_lines_only: bool,
+    pub number_lines: bool,
 }
 
 impl<'a> Config<'a> {
@@ -13,8 +14,9 @@ impl<'a> Config<'a> {
         let filename = matches.value_of("FILENAME").expect("Missing filename.");
         let case_sensitive = matches.is_present("case-sensitive");
         let count_lines_only = matches.is_present("count");
+        let number_lines = matches.is_present("number-lines");
 
-        Ok(Config { query, filename, case_sensitive, count_lines_only })
+        Ok(Config { query, filename, case_sensitive, count_lines_only, number_lines })
     }
 }
 
@@ -45,6 +47,17 @@ pub fn count_lines<'a>(query: &'a str, contents: &'a str) -> i32 {
     contents.lines().fold(0, |acc, l| {
         if l.contains(query) {
             acc + 1
+        } else {
+            acc
+        }
+    })
+}
+
+pub fn number_lines<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
+    contents.lines().fold(Vec::new(), |mut acc, l| {
+        if l.contains(query) {
+            acc.push(&format!("{}:{}", &acc.len() + 1, l));
+            acc
         } else {
             acc
         }
@@ -89,5 +102,17 @@ Pick three.
 Trust me.";
 
         assert_eq!(2, count_lines(query, contents));
+    }
+
+    #[test]
+    fn test_number_lines() {
+        let query = "duct";
+        let contents = "\
+Rust:
+safe, fast, productive.
+Pick three.
+Duct tape.";
+
+        assert_eq!(vec!["1:safe, fast, productive."], number_lines(query, contents));
     }
 }
