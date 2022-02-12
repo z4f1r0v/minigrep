@@ -3,7 +3,7 @@ use clap::ArgMatches;
 pub struct Config<'a> {
     pub query: &'a str,
     pub filename: &'a str,
-    pub case_sensitive: bool,
+    pub ignore_case: bool,
     pub count_lines_only: bool,
 }
 
@@ -11,14 +11,14 @@ impl<'a> Config<'a> {
     pub fn new(matches: &'a ArgMatches) -> Result<Config<'a>, &'a str> {
         let query = matches.value_of("QUERY").expect("Missing query.");
         let filename = matches.value_of("FILENAME").expect("Missing filename.");
-        let case_sensitive = matches.is_present("case-sensitive");
+        let ignore_case = matches.is_present("ignore-case");
         let count_lines_only = matches.is_present("count");
 
-        Ok(Config { query, filename, case_sensitive, count_lines_only })
+        Ok(Config { query, filename, ignore_case, count_lines_only })
     }
 }
 
-pub fn search<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
     contents.lines().fold(Vec::new(), |mut acc, l| {
         if l.contains(query) {
             acc.push(l);
@@ -29,7 +29,7 @@ pub fn search<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
     })
 }
 
-pub fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_insensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
     let lowercased_query = query.to_lowercase();
     contents.lines().fold(Vec::new(), |mut acc, l| {
         if l.to_lowercase().contains(&lowercased_query) {
@@ -64,7 +64,7 @@ safe, fast, productive.
 Pick three.
 Duct tape.";
 
-        assert_eq!(vec!["safe, fast, productive."], search(query, contents));
+        assert_eq!(vec!["safe, fast, productive."], search_case_sensitive(query, contents));
     }
 
     #[test]
@@ -76,7 +76,7 @@ safe, fast, productive.
 Pick three.
 Trust me.";
 
-        assert_eq!(vec!["Rust:", "Trust me."], search_case_sensitive(query, contents));
+        assert_eq!(vec!["Rust:", "Trust me."], search_case_insensitive(query, contents));
     }
 
     #[test]
