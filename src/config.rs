@@ -1,4 +1,5 @@
 use clap::ArgMatches;
+use colored::Colorize;
 
 pub struct Config<'a> {
     pub query: &'a str,
@@ -19,26 +20,15 @@ impl<'a> Config<'a> {
 }
 
 pub fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
-    contents.lines().fold(Vec::new(), |mut acc, l| {
-        if l.contains(query) {
-            acc.push(l);
-            acc
-        } else {
-            acc
-        }
-    })
+    contents.lines()
+        .filter(|l| l.contains(query))
+        .collect()
 }
 
 pub fn search_case_insensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
-    let lowercased_query = query.to_lowercase();
-    contents.lines().fold(Vec::new(), |mut acc, l| {
-        if l.to_lowercase().contains(&lowercased_query) {
-            acc.push(l);
-            acc
-        } else {
-            acc
-        }
-    })
+    contents.lines()
+        .filter(|l| l.to_lowercase().contains(&query.to_lowercase()))
+        .collect()
 }
 
 pub fn count_lines<'a>(query: &'a str, contents: &'a str) -> i32 {
