@@ -19,15 +19,17 @@ impl<'a> Config<'a> {
     }
 }
 
-pub fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<String> {
     contents.lines()
         .filter(|l| l.contains(query))
+        .map(|l| l.replace(query, &format!("{}", query.red())))
         .collect()
 }
 
-pub fn search_case_insensitive<'a>(query: &'a str, contents: &'a str) -> Vec<&'a str> {
+pub fn search_case_insensitive<'a>(query: &'a str, contents: &'a str) -> Vec<String> {
     contents.lines()
         .filter(|l| l.to_lowercase().contains(&query.to_lowercase()))
+        .map(|l| l.replace(query.to_lowercase().as_str(), &format!("{}", query.red())))
         .collect()
 }
 
