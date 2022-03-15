@@ -1,5 +1,6 @@
 use clap::ArgMatches;
 use colored::Colorize;
+use regex::{Captures, RegexBuilder};
 
 pub struct Config<'a> {
     pub query: &'a str,
@@ -27,9 +28,18 @@ pub fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<Strin
 }
 
 pub fn search_case_insensitive<'a>(query: &'a str, contents: &'a str) -> Vec<String> {
+    let rx = RegexBuilder::new(query)
+        .case_insensitive(true)
+        .build()
+        .expect("Invalid Regex");
+
     contents.lines()
-        .filter(|l| l.to_lowercase().contains(&query.to_lowercase()))
-        .map(|l| l.replace(query.to_lowercase().as_str(), &format!("{}", query.red())))
+        .filter(|l| rx.captures(l).is_some())
+        .map(|l| rx.replace(l,
+                            |caps: &Captures| caps.iter().map(|m| {
+                                &format!("{}", m.unwrap().as_str().red())
+                            }),
+        ))
         .collect()
 }
 
