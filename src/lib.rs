@@ -1,7 +1,7 @@
 use std::{error::Error, fs};
 
 use clap::ArgMatches;
-use colored::Colorize;
+use regex::Regex;
 
 pub struct Config<'a> {
     pub query: &'a str,
@@ -27,53 +27,33 @@ impl<'a> Config<'a> {
 
     pub fn new(config: Config) -> Result<(), Box<dyn Error>> {
         let contents = fs::read_to_string(config.filename)?;
+        let results = filter_lines(contents, config.case_insensitive, config.query);
 
-        match (config.case_insensitive, config.count_lines_only) {
-            (true, true) => {
-                let result = search_case_insensitive(config.query, &contents).len();
-                println!("{}", result);
-            }
-            (true, false) => {
-                let results = search_case_insensitive(config.query, &contents);
-                results.iter().for_each(|x| println!("{}", x));
-            }
-            (false, true) => {
-                let result = search_case_sensitive(config.query, &contents).len();
-                println!("{}", result);
-            }
-            (false, false) => {
-                let results = search_case_sensitive(config.query, &contents);
-                results.iter().for_each(|x| println!("{}", x));
-            }
+        if config.count_lines_only {
+            println!("{}", results.len());
+        } else {
+            results.iter().for_each(|x| println!("{}", x));
         };
 
         Ok(())
     }
 }
 
-pub fn search_case_sensitive<'a>(query: &'a str, contents: &'a str) -> Vec<String> {
+pub fn filter_lines(contents: String, case_insensitive: bool, query: &str) -> Vec<String> {
+    let regex_pattern = if case_insensitive {
+        format!(r"(?i){}", regex::escape(query))
+    } else {
+        format!(r"{}", regex::escape(query))
+    };
+    let regex = Regex::new(&regex_pattern).expect("Invalid regex");
+    let red_highlight = "\x1b[31m$0\x1b[0m"; // ANSI escape code for red color
+
     contents
         .lines()
-        .filter(|l| l.contains(query))
-        .map(|l| l.replace(query, &format!("{}", query.red())))
+        .filter(|line| regex.is_match(line))
+        .map(|line| regex.replace_all(line, red_highlight).to_string())
         .collect()
 }
-
-pub fn search_case_insensitive(query: &str, contents: &str) -> Vec<String> {
-    let query_lower = query.to_lowercase();
-    
-    contents
-        .lines()
-        .filter(|l| l.to_lowercase().contains(&query_lower))
-        .map(|line| {
-            let highlighted_line = line
-                .to_lowercase()
-                .replace(&query_lower, &format!("{}", query.red()));
-            highlighted_line
-        })
-        .collect()
-}
-
 
 #[cfg(test)]
 mod test {
@@ -90,7 +70,7 @@ Duct tape.";
 
         assert_eq!(
             vec!["safe, fast, pro\u{1b}[31mduct\u{1b}[0mive."],
-            search_case_sensitive(query, contents)
+            filter_lines(contents.to_string(), false, query)
         );
     }
 
@@ -104,8 +84,8 @@ Pick three.
 Trust me.";
 
         assert_eq!(
-            vec!["\u{1b}[31mrUsT\u{1b}[0m:", "t\u{1b}[31mrUsT\u{1b}[0m me."],
-            search_case_insensitive(query, contents)
+            vec!["\u{1b}[31mRust\u{1b}[0m:", "T\u{1b}[31mrust\u{1b}[0m me."],
+            filter_lines(contents.to_string(), true, query)
         );
     }
 }
