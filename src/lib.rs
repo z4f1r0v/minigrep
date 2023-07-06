@@ -12,10 +12,10 @@ pub struct Config<'a> {
 
 impl<'a> Config<'a> {
     pub fn parse(matches: &'a ArgMatches) -> Result<Config<'a>, &'a str> {
-        let count_lines_only = matches.is_present("count");
-        let case_insensitive = matches.is_present("case_insensitive");
-        let query = matches.value_of("QUERY").expect("Missing query.");
-        let filename = matches.value_of("FILENAME").expect("Missing filename.");
+        let count_lines_only = matches.get_flag("count");
+        let case_insensitive = matches.get_flag("case_insensitive");
+        let query = matches.get_one::<String>("QUERY").expect("Missing query.");
+        let filename = matches.get_one::<String>("FILENAME").expect("Missing filename.");
 
         Ok(Config {
             query,

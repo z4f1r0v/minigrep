@@ -2,26 +2,26 @@ extern crate core;
 
 use std::process;
 
-use clap::{App, Arg, ArgMatches};
+use clap::{Arg, ArgMatches, ArgAction, Command};
 
 use picogrep::Config;
 
 fn main() {
-    let matches: ArgMatches = App::new("picogrep")
+    let matches: ArgMatches = Command::new("picogrep")
         .about("A miniature version of grep")
         .arg(
             Arg::new("count")
                 .short('c')
                 .long("count")
                 .help("Return the amount matches")
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
         )
         .arg(
             Arg::new("case_insensitive")
                 .short('i')
                 .long("case-insensitive")
                 .help("Perform a case insensitive search")
-                .takes_value(false)
+                .action(ArgAction::SetTrue)
         )
         .arg(
             Arg::new("QUERY")
