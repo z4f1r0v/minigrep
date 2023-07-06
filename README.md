@@ -7,18 +7,16 @@ for building a `grep` clone.
 I'm going through `man grep` and choosing flags with increasing difficulty to expand my Rust skills. So far we have:
 ```sh
 $ ./target/debug/picogrep -h
-picogrep 
-A miniature version of grep
+A mininal version of grep
 
-USAGE:
-    picogrep [OPTIONS] [ARGS]
+Usage: picogrep [OPTIONS] <QUERY> <FILENAME>
 
-ARGS:
-    <QUERY>       
-    <FILENAME>    
+Arguments:
+  <QUERY>     The string to search for
+  <FILENAME>  The file to search
 
-OPTIONS:
-    -c, --count          Return the amount matches
-    -h, --help           Print help information
-    -i, --ignore-case    Ignore case sensitivity
+Options:
+  -c, --count             Return the amount matches
+  -i, --case-insensitive  Perform a case insensitive search
+  -h, --help              Print help
 ```

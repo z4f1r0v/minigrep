@@ -12,3 +12,5 @@ Cargo.lock
 .metals
 
 .DS_Store
+
+*.txt
