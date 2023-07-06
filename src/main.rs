@@ -8,7 +8,7 @@ use picogrep::Config;
 
 fn main() {
     let matches: ArgMatches = Command::new("picogrep")
-        .about("A miniature version of grep")
+        .about("A mininal version of grep")
         .arg(
             Arg::new("count")
                 .short('c')
